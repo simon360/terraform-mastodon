@@ -4,7 +4,7 @@ variable "GCLOUD_PROJECT" {
 }
 
 provider "google" {
-  project = GCLOUD_PROJECT
+  project = var.GCLOUD_PROJECT
   region  = "europe-west1"
 }
 
