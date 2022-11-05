@@ -29,6 +29,10 @@ resource "google_project_service" "run_api" {
   service = "run.googleapis.com"
 }
 
+resource "google_project_service" "sqladmin_api" {
+  service = "sqladmin.googleapis.com"
+}
+
 resource "google_cloud_run_service" "default" {
   name     = "sadl-mastodon-srv"
   location = "europe-west1"
@@ -45,4 +49,15 @@ resource "google_cloud_run_service" "default" {
     percent         = 100
     latest_revision = true
   }
+}
+
+resource "google_sql_database_instance" "instance" {
+  name             = "sadl-mastodon-sql"
+  region           = "europe-west1"
+  database_version = "POSTGRES_14"
+  settings {
+    tier = "db-f1-micro"
+  }
+
+  deletion_protection = "true"
 }
