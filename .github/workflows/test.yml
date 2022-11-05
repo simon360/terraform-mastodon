@@ -6,34 +6,34 @@ env:
   IMAGE_TAG: gcr.io/${{ secrets.TF_VAR_GCLOUD_PROJECT }}/sadl-mastodon
 
 jobs:
-  cloudbuild:
-    name: Build image in Cloud Build
-    runs-on: ubuntu-latest
-    environment: Production
+  # cloudbuild:
+  #   name: Build image in Cloud Build
+  #   runs-on: ubuntu-latest
+  #   environment: Production
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
-      - id: "auth"
-        uses: "google-github-actions/auth@v0"
-        with:
-          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+  #     - id: "auth"
+  #       uses: "google-github-actions/auth@v0"
+  #       with:
+  #         credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
 
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
+  #     - name: Set up Cloud SDK
+  #       uses: google-github-actions/setup-gcloud@v0
 
-      - name: Build
-        run: |-
-          gcloud builds submit \
-            --quiet \
-            --tag "$IMAGE_TAG:$GITHUB_SHA"
+  #     - name: Build
+  #       run: |-
+  #         gcloud builds submit \
+  #           --quiet \
+  #           --tag "$IMAGE_TAG:$GITHUB_SHA"
 
   terraform:
     name: Terraform
     runs-on: ubuntu-latest
     environment: Production
-    needs: cloudbuild
+    # needs: cloudbuild
 
     steps:
       - name: Checkout
