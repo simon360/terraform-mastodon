@@ -122,3 +122,8 @@ resource "google_sql_database_instance" "instance" {
 
   deletion_protection = "true"
 }
+
+resource "google_sql_database" "database" {
+  name     = "mastodon"
+  instance = google_sql_database_instance.instance.name
+}
