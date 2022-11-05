@@ -56,6 +56,10 @@ resource "google_project_service" "sqladmin_api" {
 # }
 
 resource "google_sql_database_instance" "instance" {
+  depends_on = [
+    google_project_service.sqladmin_api
+  ]
+
   name             = "sadl-mastodon-sql"
   region           = "europe-west1"
   database_version = "POSTGRES_14"
