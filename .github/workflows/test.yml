@@ -27,3 +27,10 @@ jobs:
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
           TF_VAR_GCLOUD_PROJECT: ${{ secrets.TF_VAR_GCLOUD_PROJECT }}
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+          TF_VAR_GCLOUD_PROJECT: ${{ secrets.TF_VAR_GCLOUD_PROJECT }}
