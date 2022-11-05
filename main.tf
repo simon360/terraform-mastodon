@@ -14,6 +14,12 @@ provider "google" {
   zone    = "europe-west1-d"
 }
 
+provider "google-beta" {
+  project = var.GCLOUD_PROJECT
+  region  = "europe-west1"
+  zone    = "europe-west1-d"
+}
+
 terraform {
   backend "gcs" {
     bucket = "sadl-mastodon-tf"
@@ -31,6 +37,14 @@ resource "google_project_service" "run_api" {
 
 resource "google_project_service" "sqladmin_api" {
   service = "sqladmin.googleapis.com"
+}
+
+resource "google_project_service" "compute_api" {
+  service = "compute.googleapis.com"
+}
+
+resource "google_project_service" "servicenetworking_api" {
+  service = "servicenetworking.googleapis.com"
 }
 
 # resource "google_cloud_run_service" "default" {
@@ -55,16 +69,55 @@ resource "google_project_service" "sqladmin_api" {
 #   }
 # }
 
-resource "google_sql_database_instance" "instance" {
+resource "google_compute_network" "private_network" {
+  provider = google-beta
+
   depends_on = [
-    google_project_service.sqladmin_api
+    google_project_service.compute_api
+  ]
+
+  name = "private-network"
+}
+
+resource "google_compute_global_address" "private_ip_address" {
+  provider = google-beta
+
+  name          = "private-ip-address"
+  purpose       = "VPC_PEERING"
+  address_type  = "INTERNAL"
+  prefix_length = 16
+  network       = google_compute_network.private_network.id
+}
+
+resource "google_service_networking_connection" "private_vpc_connection" {
+  provider = google-beta
+
+  depends_on = [
+    google_project_service.servicenetworking_api
+  ]
+
+  network                 = google_compute_network.private_network.id
+  service                 = "servicenetworking.googleapis.com"
+  reserved_peering_ranges = [google_compute_global_address.private_ip_address.name]
+}
+
+resource "google_sql_database_instance" "instance" {
+  provider = google-beta
+  depends_on = [
+    google_project_service.sqladmin_api,
+    google_service_networking_connection.private_vpc_connection
   ]
 
   name             = "sadl-mastodon-sql"
   region           = "europe-west1"
   database_version = "POSTGRES_14"
+
   settings {
     tier = "db-f1-micro"
+    ip_configuration {
+      ipv4_enabled    = false
+      private_network = google_compute_network.private_network.id
+    }
   }
 
   deletion_protection = "true"
