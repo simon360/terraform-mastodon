@@ -1,6 +1,34 @@
 name: Deploy to GCP
 on: push
+
 jobs:
+  cloudbuild:
+    name: Build image in Cloud Build
+    runs-on: ubuntu-latest
+    environment: Production
+
+    env:
+      PROJECT_ID: ${{ secrets.TF_VAR_GCLOUD_PROJECT }}
+      SERVICE_NAME: sadl-mastodon
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - id: "auth"
+        uses: "google-github-actions/auth@v0"
+        with:
+          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+
+      - name: Build
+        run: |-
+          gcloud builds submit \
+            --quiet \
+            --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
+
   terraform:
     name: Terraform
     runs-on: ubuntu-latest
