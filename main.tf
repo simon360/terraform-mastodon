@@ -8,6 +8,10 @@ provider "google" {
   region  = "europe-west1"
 }
 
+resource "google_project_service" "compute_api" {
+  service = "compute.googleapis.com"
+}
+
 resource "google_compute_instance" "vm_instance" {
   name         = "terraform-instance"
   machine_type = "e2-micro"
