@@ -33,6 +33,7 @@ jobs:
     name: Terraform
     runs-on: ubuntu-latest
     environment: Production
+    needs: cloudbuild
 
     steps:
       - name: Checkout
