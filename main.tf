@@ -6,6 +6,7 @@ variable "GCLOUD_PROJECT" {
 provider "google" {
   project = var.GCLOUD_PROJECT
   region  = "europe-west1"
+  zone    = "europe-west1-d"
 }
 
 resource "google_project_service" "compute_api" {
