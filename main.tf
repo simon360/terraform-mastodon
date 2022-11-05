@@ -15,3 +15,7 @@ terraform {
     prefix = "terraform/state"
   }
 }
+
+resource "google_project_service" "build_api" {
+  service = "cloudbuild.googleapis.com"
+}
