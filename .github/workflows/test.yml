@@ -1,15 +1,15 @@
 name: Deploy to GCP
 on: push
 
+env:
+  PROJECT_ID: ${{ secrets.TF_VAR_GCLOUD_PROJECT }}
+  IMAGE_TAG: gcr.io/${{ secrets.TF_VAR_GCLOUD_PROJECT }}/sadl-mastodon:$GITHUB_SHA
+
 jobs:
   cloudbuild:
     name: Build image in Cloud Build
     runs-on: ubuntu-latest
     environment: Production
-
-    env:
-      PROJECT_ID: ${{ secrets.TF_VAR_GCLOUD_PROJECT }}
-      SERVICE_NAME: sadl-mastodon
 
     steps:
       - name: Checkout
@@ -27,7 +27,7 @@ jobs:
         run: |-
           gcloud builds submit \
             --quiet \
-            --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
+            --tag "$IMAGE_TAG"
 
   terraform:
     name: Terraform
