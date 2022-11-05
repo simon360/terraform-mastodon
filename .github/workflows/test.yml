@@ -13,6 +13,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Load Google credentials into file
+        run: echo $GCLOUD_CREDENTIALS > gcloud-service-key.json
+
+      - name: Set env var for Google credentials
+        run: echo 'GOOGLE_APPLICATION_CREDENTIALS="gcloud-service-key.json"' >> $GITHUB_ENV
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
@@ -25,5 +31,4 @@ jobs:
       - name: Plan Terraform
         run: terraform plan
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           TF_VAR_GCLOUD_PROJECT: ${{ secrets.TF_VAR_GCLOUD_PROJECT }}
