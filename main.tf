@@ -51,6 +51,10 @@ resource "google_project_service" "redis_api" {
   service = "redis.googleapis.com"
 }
 
+resource "google_project_service" "vpcaccess_api" {
+  service = "vpcaccess.googleapis.com"
+}
+
 # resource "google_cloud_run_service" "default" {
 #   name     = "sadl-mastodon-srv"
 #   location = "europe-west1"
@@ -146,4 +150,13 @@ resource "google_redis_instance" "redis" {
     google_project_service.redis_api,
     google_service_networking_connection.private_vpc_connection
   ]
+}
+
+resource "google_vpc_access_connector" "connector" {
+  depends_on = [
+    google_project_service.vpcaccess_api
+  ]
+  name          = "sadl-mastodon-connector"
+  ip_cidr_range = "10.8.0.0/28"
+  network       = google_compute_network.private_network.id
 }
