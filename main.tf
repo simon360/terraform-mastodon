@@ -47,6 +47,10 @@ resource "google_project_service" "servicenetworking_api" {
   service = "servicenetworking.googleapis.com"
 }
 
+resource "google_project_service" "redis_api" {
+  service = "redis.googleapis.com"
+}
+
 # resource "google_cloud_run_service" "default" {
 #   name     = "sadl-mastodon-srv"
 #   location = "europe-west1"
@@ -126,4 +130,20 @@ resource "google_sql_database_instance" "instance" {
 resource "google_sql_database" "database" {
   name     = "mastodon"
   instance = google_sql_database_instance.instance.name
+}
+
+resource "google_redis_instance" "redis" {
+  name           = "mastodon-redis"
+  tier           = "BASIC"
+  memory_size_gb = 1
+
+  location_id = "europe-west1-d"
+
+  authorized_network = google_compute_network.private_network.id
+  connect_mode       = "PRIVATE_SERVICE_ACCESS"
+
+  depends_on = [
+    google_project_service.redis_api,
+    google_service_networking_connection.private_vpc_connection
+  ]
 }
