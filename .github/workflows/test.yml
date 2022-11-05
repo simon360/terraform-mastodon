@@ -3,7 +3,7 @@ on: push
 
 env:
   PROJECT_ID: ${{ secrets.TF_VAR_GCLOUD_PROJECT }}
-  IMAGE_TAG: gcr.io/${{ secrets.TF_VAR_GCLOUD_PROJECT }}/sadl-mastodon:$GITHUB_SHA
+  IMAGE_TAG: gcr.io/${{ secrets.TF_VAR_GCLOUD_PROJECT }}/sadl-mastodon
 
 jobs:
   cloudbuild:
@@ -27,7 +27,7 @@ jobs:
         run: |-
           gcloud builds submit \
             --quiet \
-            --tag "$IMAGE_TAG"
+            --tag "$IMAGE_TAG:$GITHUB_SHA"
 
   terraform:
     name: Terraform
