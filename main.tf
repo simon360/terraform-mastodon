@@ -9,6 +9,13 @@ provider "google" {
   zone    = "europe-west1-d"
 }
 
+terraform {
+  backend "gcs" {
+    bucket = "sadl-mastodon-tf"
+    prefix = "terraform/state"
+  }
+}
+
 resource "google_project_service" "compute_api" {
   service = "compute.googleapis.com"
 }
