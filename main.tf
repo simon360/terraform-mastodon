@@ -33,23 +33,27 @@ resource "google_project_service" "sqladmin_api" {
   service = "sqladmin.googleapis.com"
 }
 
-resource "google_cloud_run_service" "default" {
-  name     = "sadl-mastodon-srv"
-  location = "europe-west1"
+# resource "google_cloud_run_service" "default" {
+#   name     = "sadl-mastodon-srv"
+#   location = "europe-west1"
 
-  template {
-    spec {
-      containers {
-        image = var.RUN_IMAGE
-      }
-    }
-  }
+#   metadata {
+#     namespace = "sadl-mastodon"
+#   }
 
-  traffic {
-    percent         = 100
-    latest_revision = true
-  }
-}
+#   template {
+#     spec {
+#       containers {
+#         image = var.RUN_IMAGE
+#       }
+#     }
+#   }
+
+#   traffic {
+#     percent         = 100
+#     latest_revision = true
+#   }
+# }
 
 resource "google_sql_database_instance" "instance" {
   name             = "sadl-mastodon-sql"
